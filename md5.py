@@ -1,11 +1,11 @@
 import hashlib
 
 #Necesitas tener rockyou.txt en el mismo directorio que md5.py
-with open('Dcipher-Scripts/rockyou.txt', 'r', errors='ignore') as archivo:
+with open('rockyou.txt', 'r', errors='ignore') as archivo:
     passwordsList = [linea.strip() for linea in archivo]
 
 #Para mostrar la lista del blog de notas
-print(passwordsList)
+# print(passwordsList)
 
 def hash_md5(cadena):
     resultado = hashlib.md5(cadena.encode())
