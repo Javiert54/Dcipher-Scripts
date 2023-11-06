@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Para instalar "haiti":
 # sudo apt install rubygems
 # sudo apt install haiti-hash
