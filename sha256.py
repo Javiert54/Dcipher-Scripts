@@ -1,7 +1,7 @@
 import hashlib
 
 #Necesitas tener rockyou.txt en el mismo directorio que sha256.py
-with open('Dcipher-Scripts/rockyou.txt', 'r', errors='ignore') as archivo:
+with open('rockyou.txt', 'r', errors='ignore') as archivo:
     passwordsList = [linea.strip() for linea in archivo]
     
 def dcryptSha256(texto):
