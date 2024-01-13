@@ -107,7 +107,7 @@ driver.get(url)
 email = WebDriverWait(driver, 10).until(
     EC.visibility_of_element_located((By.NAME, 'identifier'))
 )
-email.send_keys(input("Escribe el correo para hackear: "))
+email.send_keys(input("Escribe el correo para hackear: (en mi ejemplo es: javidihack@gmail.com, y su contraseña: Solar123)"))
 
 # Encuentra y haz clic en el botón de enviar
 boton_siguiente = driver.find_element(By.XPATH, "//span[contains(text(), 'Siguiente')]")
