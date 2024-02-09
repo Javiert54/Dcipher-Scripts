@@ -54,14 +54,16 @@ def choosing(uncoverOrFlag: str):
     if uncoverOrFlag=="1":
         while True:
             coordenades = input('\nEnter the cell you want to uncover (format: "x,y". EXAMPLE: 10,12) put "GB" if you want to go back\n    ')
-            if coordenades == "GB":
-                return None
-            elif coordenades[: coordenades.index(",")].isdigit() and coordenades[coordenades.index(",")+1 :].isdigit():
-                x = int( coordenades[: coordenades.index(",")] )
-                y = int( coordenades[coordenades.index(",")+1 :] )
-                ObjectsTable[x][y].isUnCovered = True
-
-                return "hola"
+            try:
+                if coordenades == "GB":
+                    return None
+                elif coordenades[: coordenades.index(",")].isdigit() and coordenades[coordenades.index(",")+1 :].isdigit():
+                    x = int( coordenades[: coordenades.index(",")] )
+                    y = int( coordenades[coordenades.index(",")+1 :] )
+                    ObjectsTable[x][y].isUnCovered = True
+            except:
+                print("Invalid Input")
+            
 election = choosing(OneOrTwo())
 while election == None:
     election = choosing(OneOrTwo())
