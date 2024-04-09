@@ -18,14 +18,14 @@ def encontrar_archivos(patrones, ruta, cadenas):
     # Recorremos la carpeta de manera recursiva
     for raiz, dirs, archivos in os.walk(ruta):
         for archivo in archivos:
-            ruta_archivo = os.path.join(raiz, archivo)
+            ruta_archivo = os.path.join(raiz, archivo).lower()  # Convertimos la ruta a minúsculas
             # Si no se proporcionaron patrones, añadimos todos los archivos cuya ruta contenga las cadenas especificadas
-            if patrones == ['']:
-                if all(cadena in ruta_archivo for cadena in cadenas):
+            if not patrones:
+                if all(cadena.lower() in ruta_archivo for cadena in cadenas):  # Convertimos las cadenas a minúsculas
                     archivos_coincidentes.append(ruta_archivo)
             else:
                 for patron in patrones:
-                    if fnmatch.fnmatch(archivo, patron) and all(cadena in ruta_archivo for cadena in cadenas):
+                    if fnmatch.fnmatch(archivo, patron) and all(cadena.lower() in ruta_archivo for cadena in cadenas):  # Convertimos las cadenas a minúsculas
                         archivos_coincidentes.append(ruta_archivo)
 
     return archivos_coincidentes
