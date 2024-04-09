@@ -20,7 +20,7 @@ def encontrar_archivos(patrones, ruta, cadenas):
         for archivo in archivos:
             ruta_archivo = os.path.join(raiz, archivo).lower()  # Convertimos la ruta a minúsculas
             # Si no se proporcionaron patrones, añadimos todos los archivos cuya ruta contenga las cadenas especificadas
-            if not patrones:
+            if patrones == ['']:
                 if all(cadena.lower() in ruta_archivo for cadena in cadenas):  # Convertimos las cadenas a minúsculas
                     archivos_coincidentes.append(ruta_archivo)
             else:
