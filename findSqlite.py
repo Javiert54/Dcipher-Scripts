@@ -75,5 +75,5 @@ def print_table(database_path, table_name):
 dataBase = input('Ruta de la base de datos: ')
 text2Find = input('\nIntroduce el texto a buscar en la base de datos: ')
 # Call the function to search in all tables of 'my_database.db' for 'my_search_text'
-print_table(dataBase, 'conversation')
+# print_table(dataBase, 'conversation')
 search_in_all_tables(dataBase, text2Find)
