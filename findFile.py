@@ -32,7 +32,7 @@ def encontrar_archivos(patrones, ruta, cadenas=None):
     return archivos_coincidentes
 
 # Ejemplo de uso
-patrones = input('Introduce los patrones que estes buscando, separandolos con ";". Por ejemplo: *.db;*.pdf;*.html\n    (si no quieres buscar ningun patron, solo pulsa ENTER)\n').split(';') # Reemplaza esto con los patrones que estás buscando
+patrones = input('Introduce los patrones que estes buscando, separandolos con ";". Por ejemplo: *.db;*.pdf;*.html\n    (si no quieres buscar ningun patron en particular, solo pulsa ENTER)\n').split(';') # Reemplaza esto con los patrones que estás buscando
 ruta_carpeta = input('Introduce la ruta a la carpeta: ')  # Reemplaza esto con la ruta de la carpeta que quieres buscar
 cadenas_input = input('Introduce las cadenas que deben estar contenidas en la ruta del archivo (si son varias palabras que pueden no estar pegadas, sepáralas con ";" EJEJMPLO: google;gmail;sent):\n')  # Reemplaza esto con las cadenas que deben estar contenidas en la ruta del archivo
 cadenas = None if cadenas_input == '' else cadenas_input.split(';')
@@ -63,4 +63,4 @@ print(f"Se encontraron {len(archivos_encontrados)} archivos que coinciden con lo
 for archivo in archivos_encontrados:
     shutil.copy(archivo, newFolder)
     print(archivo)
-print('Imagenes guardadas en:',newFolder)
+print('Archivos guardados en:',newFolder)
