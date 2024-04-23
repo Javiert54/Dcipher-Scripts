@@ -1,6 +1,7 @@
 import os
 import fnmatch
-
+import shutil
+ruta_script = os.path.realpath(__file__)
 def encontrar_archivos(patrones, ruta, cadenas=None):
     """
     Esta función busca todos los archivos en una ruta dada que coinciden con los patrones proporcionados y cuya ruta contenga una lista de cadenas específicas.
@@ -37,6 +38,29 @@ cadenas_input = input('Introduce las cadenas que deben estar contenidas en la ru
 cadenas = None if cadenas_input == '' else cadenas_input.split(';')
 archivos_encontrados = encontrar_archivos(patrones, ruta_carpeta, cadenas)
 
+newFolder = ruta_script+'outputFiles'
+# Crea la carpeta
+if not os.path.exists(newFolder):
+    os.makedirs(newFolder)
+else:
+        # Itera sobre todos los archivos en la carpeta
+    for filename in os.listdir(newFolder):
+        # Crea la ruta completa del archivo
+        file_path = os.path.join(newFolder, filename)
+        try:
+            # Si es un archivo, lo borra
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            # Si es una carpeta, la borra
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(f'Error al borrar {file_path}. Razón: {e}')
+
+    print(f"El contenido de la carpeta {newFolder} se ha borrado exitosamente.")
+
 print(f"Se encontraron {len(archivos_encontrados)} archivos que coinciden con los patrones {patrones} y cuya ruta contiene '{cadenas}':")
 for archivo in archivos_encontrados:
+    shutil.copy(archivo, newFolder)
     print(archivo)
+print('Imagenes guardadas en:',newFolder)
