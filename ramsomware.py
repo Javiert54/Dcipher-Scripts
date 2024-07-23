@@ -4,6 +4,9 @@ import psutil
 import sys
 import ctypes
 
+if input("Do you want to do this? (y/n)")!="y":
+    print(2/0)
+
 def es_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
