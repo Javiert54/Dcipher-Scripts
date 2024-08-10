@@ -1,26 +1,117 @@
 import os
-import fnmatch
+import psutil
+import sys
+import ctypes
+import docx
+import PyPDF2
+from odf.opendocument import load
+from odf.text import P
 import shutil
 
+def run_as_admin():
+    try:
+        # Solicita permisos de administrador
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    except Exception as e:
+        print(f"Error al solicitar permisos de administrador: {e}")
+        sys.exit(1)
+
+if ctypes.windll.shell32.IsUserAnAdmin():
+    pass
+else:
+    run_as_admin()
+    
+    
+    
+#  -----------------------------------------------------------------------------
+
+#  Functions to read files:
+
+def readInOdt(file:str, word:str):
+    doc = load(file)
+    for parrafo in doc.getElementsByType(P):
+        if word.lower() in str(parrafo).lower():
+            return True
+    return False
+
+def readInWord(file:str, word:str):
+    doc = docx.Document(file)
+    for para in doc.paragraphs:
+        if word.lower() in para.text.lower(): return True
+    return False
+
+def readInPdf(file:str, word:str):
+    with open(file, 'rb') as pdf_file:
+        reader = PyPDF2.PdfReader(pdf_file)
+        num_pages = len(reader.pages)
+        for page_num in range(num_pages):
+            page = reader.pages[page_num]
+            text = page.extract_text()
+            if word.lower() in text.lower(): return True
+        return False
+
+def readInNotePad(file:str, word: str):
+    with open(file, 'r', encoding='utf-8', errors ='ignore') as f:
+        return word in f.read()
+    
+#  -----------------------------------------------------------------------------
+
+
+text2find = input("Qué quieres que busque en el contenido de los archivos? (Pulsar ENTER si no se quiere buscar en los contenidos):\n> ")
+extensions = set([])
+textInPath = set([])
+patron = input("""\nQué palabras debe contener la ruta y/o qué extensiones deben tener los archivos? (NO PONER ESPACIOS)
+    EXTENSIONES SOPORTADAS:  *odt,*docx,*pdf,*rtf,*txt,*json,*csv,*excl,*ods,*aut,*db,*py,*bat,*log,*ini,*htm,*html,*xml,*cpp,*js
+    Ejemplo de uso:  cisco,redes,net,*pdf,*odt,*any
+    (*any significa que se buscará en cualquier archivo que se pueda abrir con el blog de notas)
+> """).lower().split(",")
+for i in patron:
+    if i.startswith("*") and i!= "*any": extensions.add(i[1::])
+    elif i == "*any": extensions.update(set(["txt", "json", "csv", "ods", "xcl", "aut", "db", "py", "bat", "log", "ini", "htm", "html", "xml", "cpp", "js"]))
+    else: textInPath.add(i)
+    
+
+directories = set([input("Desde dónde quieres que busque?:\n> ")+"\\"])
+
+files = set()
+if __name__ == '__main__':
+
+    while directories:
+        path = directories.pop()
+        try:
+            print(f'Intentando acceder a {path}')
+            os.chdir(path)
+            itemsInPath = os.listdir(path)
+            for item in itemsInPath:
+                itemPath = path+item
+                if os.path.isdir(itemPath):
+                    directories.add(itemPath+"\\")
+                    continue
+                print(not ( not "." in item or ( "." in item and any(i==item.split(".")[1] for i in extensions))), ",", textInPath ==set())
+                if not (any(i in itemPath for i in textInPath) or textInPath==set() ) or not ( not "." in item or ( "." in item and any(i==item.split(".")[1] for i in extensions))):
+                    continue
+                try:
+
+                    if "." in item and item.split(".")[1] in ["docx"]:
+                        if readInWord(itemPath, text2find): files.add(itemPath)
+                        
+                    elif "." in item and item.split(".")[1] in ["pdf"]:
+                        if readInPdf(itemPath, text2find): files.add(itemPath)
+                                    
+                    elif "." in item and item.split(".")[1] in ["odt"]:
+                        if readInOdt(itemPath, text2find): files.add(itemPath)
+                    else:
+                        if readInNotePad(itemPath, text2find):
+                            files.add(itemPath)
+                            
+                except Exception as error:
+                    print("No se pudo abrir el archivo: ",error)
+                    
+        except Exception as e:
+            print('Error:', e)
+
+
 ruta_script = os.path.dirname(os.path.realpath(__file__))
-
-def encontrar_archivos(patrones, ruta, cadenas=None):
-    archivos_coincidentes = []
-    for raiz, dirs, archivos in os.walk(ruta):
-        for patron in patrones:
-            for archivo in fnmatch.filter(archivos, patron):
-                ruta_completa = os.path.join(raiz, archivo)
-                if cadenas is None or any(cadena in ruta_completa for cadena in cadenas):
-                    archivos_coincidentes.append(ruta_completa)
-    return archivos_coincidentes
-
-# Ejemplo de uso
-patrones = input('Introduce los patrones que estes buscando, separandolos con ";". Por ejemplo: *.db;*.pdf;*.html\n    (si no quieres buscar ningun patron en particular, solo pulsa ENTER)\n').split(';')
-ruta_carpeta = input('Introduce la ruta a la carpeta: ')
-cadenas_input = input('Introduce las cadenas que deben estar contenidas en la ruta del archivo (si son varias palabras que pueden no estar pegadas, sepáralas con ";" EJEJMPLO: google;gmail;sent):\n')
-cadenas = None if cadenas_input == '' else cadenas_input.split(';')
-archivos_encontrados = encontrar_archivos(patrones, ruta_carpeta, cadenas)
-
 newFolder = os.path.join(ruta_script, 'outputFiles')
 if not os.path.exists(newFolder):
     os.makedirs(newFolder)
@@ -34,9 +125,9 @@ else:
                 shutil.rmtree(file_path)
         except Exception as e:
             print(f'Error al borrar {file_path}. Razón: {e}')
-
-print(f"Se encontraron {len(archivos_encontrados)} archivos que coinciden con los patrones {patrones} y cuya ruta contiene '{cadenas}':")
-for archivo in archivos_encontrados:
-    shutil.copy(archivo, newFolder)
-    print(archivo)
+            
+print(f"Archivos con {text2find} en su contenido:")
+for filePath in files:
+    shutil.copy(filePath, newFolder)
+    print(filePath)
 print('Archivos guardados en:', newFolder)
