@@ -1,9 +1,3 @@
-######## Made By Mouad Khiat
-######## This script is the Famous Vigenere cipher its like caesar that ive made in the previous gist
-######## but the difference is that we deal here with letters not numbers
-######## So with this script you can encrypt anything you want with your given key , decrypt it either with a key or a part of it
-######## or by guessing
-
 from random import sample
 from itertools import product as col
 
@@ -38,7 +32,6 @@ def vigenere(x,key):
 			
     return ''.join(lst_final)
 
-print("Welcome to Vigenere cipher")
 
 if input('Encrypt or Decrypt : ').lower() == 'encrypt':
     x = input('Enter the text : ').upper()
