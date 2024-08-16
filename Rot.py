@@ -1,11 +1,12 @@
-alfabeto = 'abcdefghijklmnopqrstuvwxyz'
+alfabeto = 'abcdefghijklmnñopqrstuvwxyz'
+print(len(alfabeto))
 def descifrar_cesar(codigo, salto):
     descifrado = ''
 
     if salto=="S":
         
         for jump in range(1, len(alfabeto)):
-            print(descifrar_cesar(codigo, jump))
+            print(descifrar_cesar(codigo, jump), jump)
     else:
         salto= int(salto)
         for letra in codigo:
